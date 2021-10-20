@@ -53,10 +53,12 @@ export default {
         message (newVal) {
             // console.log(newVal)
             var that = this
+            // var cityId = this.$store.state.city.id
             //调用方法
             this.cancelRequest()
             // 获取当前的url数据，并且拼上要搜索的值
             this.axios.get(`/ajax/search?kw=${newVal}&cityId=65&stype=-1`,{
+            // this.axios.get(`/ajax/search?kw=${newVal}&cityId=${cityId}&stype=-1`,{
                 cancelToken: new this.axios.CancelToken(function (c) {
                     console.log('11111')
                     that.source = c

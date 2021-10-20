@@ -1,31 +1,34 @@
 <template>
     <div class="movie_body">
-        <ul>
-            <!-- <li>
-                <div class="pic_show"><img src="/images/movie_1.jpg"></div>
-                <div class="info_list">
-                    <h2>无名之辈</h2>
-                    <p><span class="person">17746</span> 人想看</p>
-                    <p>主演: 陈建斌,任素汐,潘斌龙</p>
-                    <p>2018-11-30上映</p>
-                </div>
-                <div class="btn_pre">
-                    预售
-                </div>
-            </li> -->
-            <li v-for="item in comingList" :key="item.filmId">
-                <div class="pic_show"><img :src="item.poster"></div>
-                <div class="info_list">
-                    <h2>{{item.name}} <img v-if="item.filmType.value === 2" src="@/assets/maxs.png"></h2>
-                    <p v-if="item.actors">主演: {{item.actors | actorfilter}}</p>
-                    <p v-else>暂无主演</p>
-                    <p>{{item.premiereAt | showTime}}上映</p>
-                </div>
-                <div class="btn_pre">
-                    预售
-                </div>
-            </li> 
-        </ul>
+        <Loading v-if="isLoading" />
+        <Scroller v-else>
+            <ul>
+                <!-- <li>
+                    <div class="pic_show"><img src="/images/movie_1.jpg"></div>
+                    <div class="info_list">
+                        <h2>无名之辈</h2>
+                        <p><span class="person">17746</span> 人想看</p>
+                        <p>主演: 陈建斌,任素汐,潘斌龙</p>
+                        <p>2018-11-30上映</p>
+                    </div>
+                    <div class="btn_pre">
+                        预售
+                    </div>
+                </li> -->
+                <li v-for="item in comingList" :key="item.filmId">
+                    <div class="pic_show"><img :src="item.poster"></div>
+                    <div class="info_list">
+                        <h2>{{item.name}} <img v-if="item.filmType.value === 2" src="@/assets/maxs.png"></h2>
+                        <p v-if="item.actors">主演: {{item.actors | actorfilter}}</p>
+                        <p v-else>暂无主演</p>
+                        <p>{{item.premiereAt | showTime}}上映</p>
+                    </div>
+                    <div class="btn_pre">
+                        预售
+                    </div>
+                </li> 
+            </ul>
+        </Scroller>
     </div>
 </template>
 
@@ -34,12 +37,20 @@ export default {
     name: 'Comingsoon',
     data () {
         return {
-            comingList: []
+            comingList: [],
+            isLoading: true,
+            prevCityId: -1
         }
     },
-    mounted () {
+    activated () {
+        var cityId = this.$store.state.city.id
+        if( this.prevCityId === cityId) {
+            return
+        }
+        this.isLoading = true
+        console.log('1234')
         this.axios({
-            url: 'https://m.maizuo.com/gateway?cityId=210200&pageNum=1&pageSize=10&type=2&k=3533374',
+            url: `https://m.maizuo.com/gateway?cityId=${cityId}&pageNum=1&pageSize=10&type=2&k=3533374`,
             headers: {
                 'X-Client-Info': '{"a":"3000","ch":"1002","v":"5.0.4","e":"16332646631279548066889729","bc":"210200"}',
                 'X-Host': 'mall.film-ticket.film.list'
@@ -49,6 +60,8 @@ export default {
             var msg = res.data.msg
             if ( msg === 'ok') {
                 this.comingList = res.data.data.films
+                this.isLoading = false
+                this.prevCityId = cityId
             }
         })
     }
