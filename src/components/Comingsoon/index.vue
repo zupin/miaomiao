@@ -16,9 +16,9 @@
                     </div>
                 </li> -->
                 <li v-for="item in comingList" :key="item.filmId">
-                    <div class="pic_show"><img :src="item.poster"></div>
+                    <div class="pic_show" @tap="handleToDetail(item.filmId)"><img :src="item.poster"></div>
                     <div class="info_list">
-                        <h2>{{item.name}} <img v-if="item.filmType.value === 2" src="@/assets/maxs.png"></h2>
+                        <h2 @tap="handleToDetail(item.filmId)">{{item.name}} <img v-if="item.filmType.value === 2" src="@/assets/maxs.png"></h2>
                         <p v-if="item.actors">主演: {{item.actors | actorfilter}}</p>
                         <p v-else>暂无主演</p>
                         <p>{{item.premiereAt | showTime}}上映</p>
@@ -64,6 +64,12 @@ export default {
                 this.prevCityId = cityId
             }
         })
+    },
+    methods: {
+        handleToDetail (movieId) {
+            // console.log(movieId)
+            this.$router.push(`/movie/detail/2/${movieId}`)
+        }
     }
 }
 </script>
